@@ -1,15 +1,3 @@
 theme: jekyll-theme-hacker
 url: 'http://machari.github.io' # your host
 baseurl: '/'
-
-# Navigation links
-nav:
-  home: '/'
-  tags: '/tags.html'
-  
-markdown: kramdown
-highlighter: rouge
-redcarpet:
-    extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "with_toc_data", "tables"]
-kramdown:
-  input: GFM
