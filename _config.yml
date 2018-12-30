@@ -1,2 +1,20 @@
 theme: jekyll-theme-hacker
 baseurl: 
+
+# Site configurations
+gems:
+  - jekyll-paginate
+markdown: kramdown
+kramdown:
+  input: GFM
+excerpt_separator: "<!-- more -->"
+sass:
+  style: compressed
+  sass_dir: _scss    
+paginate: 5
+paginate_path: '/blog/page:num'
+permalink: pretty
+version: 1.0.0
+
+# plugin
+mathjax: true # whether support mathjax
