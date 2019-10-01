@@ -1,0 +1,7 @@
+https://medium.com/radon-dev/implicit-bayesian-personalized-ranking-in-tensorflow-b4dfa733c478
+
+## The implicit problem
+ * 암묵적 피드백에 기반한 추천 모델의 핵심 문제는 unknown values를 어떻게 처리 하느냐에 있다.
+ * 싫어서 안볼수도 있고, 아직 발견하지 못했을 수도 있기 때문이다.
+ * unknown values를 유저가 좋아하지 않는다고 처리하기는 어렵고, 대신 **본것이 안본것 보다 더 선호된다**라곤 할수 있다.
+ 
