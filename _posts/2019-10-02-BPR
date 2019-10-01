@@ -1,7 +1,50 @@
 https://medium.com/radon-dev/implicit-bayesian-personalized-ranking-in-tensorflow-b4dfa733c478
+https://datascienceschool.net/view-notebook/f4e77fde0de64b0ab1001810881544e1/
 
 ## The implicit problem
  * 암묵적 피드백에 기반한 추천 모델의 핵심 문제는 unknown values를 어떻게 처리 하느냐에 있다.
  * 싫어서 안볼수도 있고, 아직 발견하지 못했을 수도 있기 때문이다.
  * unknown values를 유저가 좋아하지 않는다고 처리하기는 어렵고, 대신 **본것이 안본것 보다 더 선호된다**라곤 할수 있다.
- 
+ * x̂ui - x̂uj > 0
+   * u : user, i : known item, j : unknown item
+   * x̂ui : user u의 i에 대한 score
+   * x̂uj : user u의 j에 대한 score
+   * known item의 score가 unknown item의 score보다 높다면 가정은 성립
+   * 기본 가정은 유저는 독립적으로 행동한다
+
+## Bayesian formulation
+ * p(x|z) = p(z|x) * p(x) / p(z)
+ * p(x|z) : z 조건일 때의 x의 확률
+ * 사전확률(prior probability): p(x)
+ * 사후확률(posterior probability): p(x|z)
+ * BPR은 베이지안 공식을 사용해서 item 집합 I내의 모든 item i에 대한 유저의 개인화된 랭킹을 posterior 확률을 maximizing 함으로써 찾아내는 것
+ * Posterior probability ∝ Likelihood x Prior probability
+   * 사후확률은 사전확률과 likelihood의 곱에 비례한다고 생각할 수 있다.
+ * 참이 될 확률을 maximize 하는 것
+   
+## A closer look at the math
+  * p(Θ|>u) ∝ p(>u|Θ)p(Θ)
+    * the probability of Θ given >u is proportional to the probability of >u given Θ multiplied by the overall probability of Θ
+    * >u : latent preference structure for user u and Θ (MF or kNN 같은 모델의 parameters를 대표)
+  * 논문에서는  the product of the likelihood p(>u | Θ) is equal to the product of p(i <u j | Θ): 임을 보여준다.
+    * the product of xi 란 x의 모든 집합에 대한 곱셈을 말함. the sum of (시그마)가 모든 집합의 합인 것 처럼
+  * likelihood 정의는 p(i <u j | Θ): = σ(x̂uij(Θ))
+    * σ is the sigmoid function
+    * x̂uij(Θ)는 파라미터 집합이 주어졌을 때 유저와 known item과 unknown item사이의 관계를 모델링하는 함수
+      * BPR에선 이 함수가 어떤 것인지 명시하지 않아서, 여러 다른 모델 클래스로 사용 할수 있음
+      * 그래서 x̂uij = x̂ui - x̂uj 이렇게 정의할수도 있음 
+  * likelihood 의 sigmoid 함수를 사용해 식을 정리하면
+    * p(Θ|>u) = product of σ(x̂uij(Θ)) * p(Θ) 인데 논문에서는 그들의 MLE(Maximum Likelihood Evaluation)에 기초해서 ln sigmoid(natural log) 사용을 제안했다
+      * ln p(Θ|>u) = ln ( product of σ(x̂uij(Θ)) * p(Θ) )
+        * the logarithm product rule ( ln(a * b) = ln(a) + ln(b) ) 
+      * ln p(Θ|>u) = sum of ln σ(x̂uij(Θ)) + ln p(Θ)
+  * 그래서, 결국 final optimization criterion 은 
+    * sum of ( ln σ(x̂uij(Θ)) ) - λΘ ||Θ|| ^ 2
+    * Θ: Our model parameter vector.
+    * x̂uij: Relationship between (u, i, j). Here the score of (u, j) subtracted from the score of (u, j).
+    * ln: The natural logarithm
+    * σ: The logistic sigmoid
+    * λ: Lambda, the regularization hyperparameters for our model.
+    * ||Θ||: The L2 norm of our model parameters
+  
+  
